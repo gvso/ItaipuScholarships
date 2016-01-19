@@ -1,4 +1,6 @@
-## Remember to put data file in the work directory
+## Data gotten from http://www.itaipu.gov.py/becas/index.php/sitio/seguimiento
+
+## Remember to put the data file in the work directory
 ## To set your work directory: http://rfunction.com/archives/1001
 
 ## The test-takers took 2 tests: one in Spanish and another in Math
