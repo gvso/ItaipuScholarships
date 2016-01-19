@@ -5,8 +5,8 @@
 
 ## The test-takers took 2 tests: one in Spanish and another in Math
 ## The total amount of points is 20 for each exam
-## To approve the test, the test-takers should get a minimun
-## 60% of 20 points (12/20 points) in both exams
+## To approve the test, the test-takers should get a minimun of
+## 60% out of 20 points (12/20 points) in both exams
 
 ## Read the dataset
 data <- read.csv('data.csv')
