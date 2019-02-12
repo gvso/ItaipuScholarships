@@ -8,8 +8,12 @@
 ## To approve the test, the test-takers should get a minimun of
 ## 60% out of 20 points (12/20 points) in both exams
 
+ROOT_DIR <- ("~/Data/Itaipu/ItaipuScholarships/")
+MIN_SCORE <- 24
+YEAR <- 2019
+
 ## Read the dataset
-data <- read.csv('data.csv')
+data <- read.csv(paste0(ROOT_DIR, 'scores_2019.csv'))
 
 ## Get the total amount of rows in the dataset
 total <- nrow(data)
@@ -19,44 +23,48 @@ total <- nrow(data)
 ## params: spanish, math, both
 approved <- function(test = 'both') {
     
-    possibleArg = c('spanish', 'math', 'both')
-    
-    approved <- c()
-    
-    ## Check the argument passed to the function
-    if(test %in% possibleArg) {
-        ## Get the test-takers who approved Spanish
-        if(test == 'spanish') {
-            approved <- subset(data, CALIFICACION.CASTELLANO >= 12)
-        }
-        ## Get the test-takers who approved Math
-        else if(test == 'math') {
-            approved <- subset(data, CALIFICACION.MATEMATICA >= 12)
-        }
-        ## Get the test-takers who approved both exams
-        else {
-            approved <- subset(data, CALIFICACION.MATEMATICA >= 12 & CALIFICACION.CASTELLANO >= 12)
-        }
-        
-        ## Get the number of test-takers who approved
-        approved <- nrow(approved)
-        
-        ## Get the number of test-takers who failed in the test
-        failed <- total - approved
-        
-        ## Create the vectors that will be passed to graphicPie
-        
-        ## Vector of data
-        x <- c(failed, approved)
-        
-        ##Vector of labels
-        lbls <- lbls <- c(paste(failed,'no aprobaron'), paste(approved, 'aprobaron'))
-        
-        graphPie(x, lbls, 'Becas de Itaipu 2016 - Exámenes computados: 3818')
+  possibleArg = c('spanish', 'math', 'both', 'both_old')
+  
+  approved <- c()
+  
+  ## Check the argument passed to the function
+  if (test %in% possibleArg) {
+    ## Get the test-takers who approved Spanish
+    if (test == 'spanish') {
+      approved <- subset(data, CALIFICACION.CASTELLANO >= 12)
+    }
+    ## Get the test-takers who approved Math
+    else if (test == 'math') {
+      approved <- subset(data, CALIFICACION.MATEMATICA >= 12)
+    }
+    ## Get the test-takers who approved both exams
+    else if (test == 'both') {
+      approved <- subset(data, TOTAL >= MIN_SCORE)
     }
     else {
-        stop("The argument should be: 'spanish', 'math', or 'both'")
+      approved <- subset(data, CALIFICACION.MATEMATICA >= 12 & CALIFICACION.CASTELLANO >= 12)
     }
+  
+    
+    ## Get the number of test-takers who approved
+    approved <- nrow(approved)
+    
+    ## Get the number of test-takers who failed in the test
+    failed <- total - approved
+    
+    ## Create the vectors that will be passed to graphicPie
+    
+    ## Vector of data
+    x <- c(failed, approved)
+    
+    ##Vector of labels
+    lbls <- lbls <- c(paste(failed, 'no aprobaron'), paste(approved, 'aprobaron'))
+    
+    graphPie(x, lbls, paste0('Becas de Itaipu ', YEAR, ' - Exámenes computados: ', total))
+  }
+  else {
+    stop("The argument should be: 'spanish', 'math', or 'both'")
+  }
     
     
 }
@@ -105,115 +113,4 @@ perfectScore <- function(test = 'both') {
     }
     
     cat('Hicieron puntaje perfecto:', nrow(perfectScorer), 'postulantes')
-}
-
-
-
-## TODO: Refactor all the below code and add documentation
-perfectScore2 <- function() {
-    approvedTest <- subset(data, CALIFICACION.MATEMATICA >= 12 & CALIFICACION.CASTELLANO >= 12)
-    perfectScore <- subset(data, CALIFICACION.MATEMATICA == 20 & CALIFICACION.CASTELLANO == 20)
-    
-    print(perfectScore)
-    
-    perfectScore <- nrow(perfectScore)
-  
-    approvedTest <- nrow(approvedTest) - perfectScore
-    
-    x <- c(perfectScore, approvedTest)
-    lbls <- c(paste(perfectScore,'lograron puntaje perfecto'), '')
-    pct <- round(x/sum(x)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(x,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Puntajes perfectos")
-}
-
-perfectScore2 <- function() {
-    perfectScore <- subset(data, CALIFICACION.MATEMATICA == 20 & CALIFICACION.CASTELLANO == 20)
-    
-    perfectScore <- nrow(perfectScore)
-    
-    applicants <- nrow(data) - perfectScore
-    
-    x <- c(perfectScore, applicants)
-    lbls <- c(paste(perfectScore,'lograron puntaje perfecto'), '')
-    pct <- round(x/sum(x)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(x,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Puntajes perfectos")
-}
-
-perfectScoreCast <- function() {
-    approvedCast <- subset(data, CALIFICACION.CASTELLANO >= 12)
-    perfectScore <- nrow(subset(data, CALIFICACION.CASTELLANO == 20))
-    
-    approvedCast <- nrow(approvedCast) - perfectScore
-    
-    x <- c(perfectScore, approvedCast)
-    lbls <- c(paste(perfectScore,'lograron puntaje perfecto'), '')
-    pct <- round(x/sum(x)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(x,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Puntajes perfectos en Castellano")
-}
-
-perfectScoreMath <- function() {
-    approvedMath <- subset(data, CALIFICACION.MATEMATICA >= 12)
-    perfectScore <- nrow(subset(data, CALIFICACION.MATEMATICA == 20))
-    
-    approvedMath <- nrow(approvedMath) - perfectScore
-    
-    x <- c(perfectScore, approvedMath)
-    lbls <- c(paste(perfectScore,'lograron puntaje perfecto'), '')
-    pct <- round(x/sum(x)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(x,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Puntajes perfectos en Matemática")
-}
-
-approvedExam60 <- function() {
-    approved <- subset(data, CALIFICACION.MATEMATICA >= 12 & CALIFICACION.CASTELLANO >= 12)
-    approvedTest <- subset(approved, CALIFICACION.MATEMATICA == 12 | CALIFICACION.CASTELLANO == 12)
-
-    approvedTest <- nrow(approvedTest)
-    approved <- nrow(approved) - approvedTest
-    x <- c(approved, approvedTest)
-    lbls <- c(paste(approved,'Aprobados con mas del 60%: '), paste(approvedTest, 'Aprobados con exactamente el 60%: '))
-    pct <- round(x/sum(x)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(x,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Aprobaron con el 60%")
-}
-
-approvedExam50 <- function() {
-    approvedTest <- subset(data, CALIFICACION.MATEMATICA >= 10 & CALIFICACION.CASTELLANO >= 10)
-    
-    approved <- nrow(approvedTest)
-    participants <- total - approved
-    v <- c(participants, approved)
-    lbls <- c(paste(participants,'No aprobaron'), paste(approved, 'Aprobaron'))
-    pct <- round(v/sum(v)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(v,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Exámenes computados: 3818")
-}
-
-approvedExam24 <- function() {
-    approvedTest <- subset(data, CALIFICACION.MATEMATICA + CALIFICACION.CASTELLANO >= 24)
-    
-    approved <- nrow(approvedTest)
-    participants <- total - approved
-    v <- c(participants, approved)
-    lbls <- c(paste(participants,'No aprobaron'), paste(approved, 'Aprobaron'))
-    pct <- round(v/sum(v)*100, 2)
-    lbls <- paste(lbls, pct) # add percents to labels 
-    lbls <- paste(lbls,"%",sep="") # ad % to labels 
-    pie(v,labels = lbls, col=rainbow(length(lbls)),
-        main="Becas de Itaipu 2016 - Exámenes computados: 3818")
 }
